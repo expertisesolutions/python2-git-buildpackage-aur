@@ -16,8 +16,8 @@ source=('git://git.tizen.org/tools/git-buildpackage.git'
 sha256sums=('SKIP' '0dd867e79c38ea813db2a263ed51abfc89fdd186259fd7c70a94c39859b4bd99')
 
 build() {
-  cd $srcdir/gbs
-  patch -p1 -i ../../python2.patch
+  cd $srcdir/git-buildpackage
+  patch -p1 -i $srcdir/python2.patch
 }
 
 package() {
