@@ -11,7 +11,7 @@ arch=('i686' 'x86_64')
 license=('GPL')
 makedepends=('python2')
 #install='python-yaml.install'
-source=('git://git.tizen.org/tools/git-buildpackage.git'
+source=('git+https://git.tizen.org/cgit/tools/git-buildpackage.git#branch=release-20160615'
         'python2.patch')
 sha256sums=('SKIP' '0dd867e79c38ea813db2a263ed51abfc89fdd186259fd7c70a94c39859b4bd99')
 
