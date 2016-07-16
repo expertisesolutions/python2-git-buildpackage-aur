@@ -1,0 +1,10 @@
+diff --git a/bin/git-buildpackage b/bin/git-buildpackage
+index bc093ab..435f7c5 100755
+--- a/bin/git-buildpackage
++++ b/bin/git-buildpackage
+@@ -1,4 +1,4 @@
+-#! /usr/bin/python -u
++#! /usr/bin/python2 -u
+ import sys
+ from gbp.scripts.buildpackage import main
+ 
