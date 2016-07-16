@@ -1,0 +1,28 @@
+diff --git a/gbp/scripts/buildpackage_rpm.py b/gbp/scripts/buildpackage_rpm.py
+index 56db5e1..82e4d21 100755
+--- a/gbp/scripts/buildpackage_rpm.py
++++ b/gbp/scripts/buildpackage_rpm.py
+@@ -507,8 +507,8 @@ def parse_args(argv, prefix, git_treeish=None):
+     # Use git_treeish as a way to print the warning only on the second parsing
+     # round
+     if options.export_only and git_treeish:
+-        gbp.log.warn("Deprecated option '--git-export-only', please use "
+-                     "'--no-build' instead!")
++        #gbp.log.warn("Deprecated option '--git-export-only', please use "
++        #             "'--no-build' instead!")
+         options.no_build = True
+ 
+     return options, args, builder_args
+diff --git a/tests/component/rpm/test_buildpackage_rpm.py b/tests/component/rpm/test_buildpackage_rpm.py
+index 652b152..c4e57b1 100644
+--- a/tests/component/rpm/test_buildpackage_rpm.py
++++ b/tests/component/rpm/test_buildpackage_rpm.py
+@@ -547,7 +547,7 @@ class TestGbpRpm(RpmRepoTestBase):
+         """Test the (deprecated) --git-export-only option"""
+         self.init_test_repo('gbp-test-native')
+         eq_(mock_gbp(['--git-export-only']), 0)
+-        self._check_log(-1, ".*Deprecated option '--git-export-only'")
++        #self._check_log(-1, ".*Deprecated option '--git-export-only'")
+ 
+     def test_builddir_options(self):
+         """Test the options related to different build directories"""
