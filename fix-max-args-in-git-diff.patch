@@ -1,0 +1,90 @@
+diff --git a/gbp/git/args.py b/gbp/git/args.py
+index f9fc64d..44ff827 100644
+--- a/gbp/git/args.py
++++ b/gbp/git/args.py
+@@ -44,7 +44,7 @@ class GitArgs(object):
+ 
+     def __init__(self, *args):
+         self._args = []
+-        self.add(args)
++        self.add(*args)
+ 
+     @property
+     def args(self):
+@@ -88,7 +88,7 @@ class GitArgs(object):
+         self.add_true(not condition, *args)
+         return self
+ 
+-    def add_cond(self, condition, opt, noopt=[]):
++    def add_cond(self, condition, opt, noopt=None):
+         """
+         Add option I{opt} to I{alist} if I{condition} is C{True}
+         else add I{noopt}.
+@@ -101,8 +101,9 @@ class GitArgs(object):
+         @type noopt: C{str} or C{list}
+         """
+         if condition:
+-            self.add(opt)
+-        else:
++            if opt:
++                self.add(opt)
++        elif noopt:
+             self.add(noopt)
+         return self
+ 
+diff --git a/gbp/git/repository.py b/gbp/git/repository.py
+index 20251a0..68af103 100644
+--- a/gbp/git/repository.py
++++ b/gbp/git/repository.py
+@@ -1802,14 +1802,14 @@ class GitRepository(object):
+         if stat is True:
+             options.add('--stat')
+         elif stat:
+-            options.add('--stat=%s' % stat)
++            options.add('--stat=%s' % str(stat))
+         options.add_true(summary, '--summary')
+         options.add_true(text, '--text')
+         options.add_true(ignore_submodules, '--ignore-submodules')
+         options.add(obj1)
+         options.add_true(obj2, obj2)
+         if paths:
+-            options.add('--', paths)
++            options.add('--', *paths)
+         output, stderr, ret = self._git_inout('diff', options.args)
+         if ret:
+             raise GitRepositoryError("Git diff failed")
+diff --git a/gbp/scripts/common/pq.py b/gbp/scripts/common/pq.py
+index a91ec8e..f26d79c 100644
+--- a/gbp/scripts/common/pq.py
++++ b/gbp/scripts/common/pq.py
+@@ -180,10 +180,17 @@ def patch_path_filter(file_status, exclude_regex=None):
+     """
+     if exclude_regex:
+         include_paths = []
++        exclude_paths = ['.']
+         for file_list in file_status.values():
+             for fname in file_list:
+                 if not re.match(exclude_regex, fname):
+                     include_paths.append(fname)
++                else:
++                    exclude_paths.append(':!' + fname)
++        if len(exclude_paths) < len(include_paths):
++            return exclude_paths
++        else:
++            return include_paths
+     else:
+         include_paths = ['.']
+ 
+diff --git a/gbp/scripts/pq_rpm.py b/gbp/scripts/pq_rpm.py
+index 32ffade..adc96db 100755
+--- a/gbp/scripts/pq_rpm.py
++++ b/gbp/scripts/pq_rpm.py
+@@ -135,7 +135,7 @@ def generate_patches(repo, start, squash, end, outdir, options):
+                 patches.append(patch_fn)
+                 start = squash_sha1
+     # Check for merge commits, yet another squash if merges found
+-    merges = repo.get_commits(start, end_commit, options=['--merges'])
++    merges = repo.get_commits(start, end_commit, options='--merges')
+     if merges:
+         # Shorten SHA1s
+         start_sha1 = repo.rev_parse(start, short=7)
